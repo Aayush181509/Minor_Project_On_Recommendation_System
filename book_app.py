@@ -7,6 +7,12 @@ popular_df = pickle.load(open("data_files/popular.pkl", "rb"))
 pt = pickle.load(open("data_files/pt.pkl","rb"))
 books = pickle.load(open("data_files/books.pkl","rb"))
 similarity_score = pickle.load(open("data_files/similarity_score.pkl","rb"))
+final_ratings = pickle.load(open("data_files/final_ratings.pkl","rb"))
+names= list(final_ratings['Book-Title'].values)
+temp=[]
+[temp.append(x) for x in names if x not in temp]
+
+
 app=Flask(__name__)
 
 @app.route('/')
@@ -22,7 +28,7 @@ def index():
 @app.route('/recommend')
 def recommend_ui():
     return render_template("recommend.html",
-    names = list(books['Book-Title'].values))
+    names = temp)
 
 
 @app.route('/recommend_books',methods=['post'])
@@ -40,7 +46,7 @@ def recommend():
         item.extend(list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values))
         
         data.append(item)
-    return render_template('recommend.html',data=data,names = list(books['Book-Title'].values))
+    return render_template('recommend.html',data=data,names=temp)
 
 if __name__=="__main__":
     app.run(debug=True)
