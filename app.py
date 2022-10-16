@@ -1,8 +1,18 @@
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request,redirect,session
 import pickle
 import numpy as np
 import pandas as pd
 import requests
+import os
+import mysql.connector
+
+app=Flask(__name__)
+
+app.secret_key=os.urandom(24)
+
+conn = mysql.connector.connect(host='localhost',database='my_db',user='root',password='A@yush@8131')
+cursor = conn.cursor()
+
 
 movies_dict = pickle.load(open("data_files/movie_dict.pkl","rb"))
 movies = pd.DataFrame(movies_dict)
@@ -45,14 +55,99 @@ popularity_val = list(popularity_df['popularity'].values)
 #     movie_poster.append(fetch_poster(new_movie_id))
 
 
-app=Flask(__name__)
-
 @app.route('/')
 def index():
-    return render_template("movie_templates/index.html",movie_title = movie_title[:50],
+    if 'user_id' in session:
+
+        return render_template("movie_templates/index.html",movie_title = movie_title[:50],
                                                         popularity_val=popularity_val[:50],
                                                         movie_poster=movie_poster,
                                                         overview=overview)
+    else:
+        return redirect('/login')
+
+
+@app.route('/recommend')
+def recommend_ui():
+    if 'user_id' in session:
+
+        return render_template("movie_templates/recommend.html",movie_title = movie_title[:50],
+                                                        popularity_val=popularity_val[:50],
+                                                        movie_poster=movie_poster,
+                                                        overview=overview)
+    else:
+        return redirect('/login')
+
+@app.route('/recommend_movies',methods=['post'])
+def recommend_movie():
+    user_input=request.form.get('user_input')
+    movie_index = movies[movies['title']==user_input].index[0]
+    distances = similarity[movie_index]
+    movies_list = sorted(list(enumerate(distances)),reverse=True,key=lambda x : x[1])[1:6]
+
+
+    recommended_movies = []
+    recommended_movies_posters=[]
+    for i in movies_list:
+        movie_id = movies.iloc[i[0]].movie_id
+        recommended_movies.append(movies.iloc[i[0]].title)
+        recommended_movies_posters.append(fetch_poster(movie_id))
+    return render_template("movie_templates/recommend.html",
+                                                        typed_value = user_input,
+                                                        movie_title = movie_title,
+                                                        popularity_val=popularity_val,
+                                                        movie_poster=movie_poster,
+                                                        overview=overview,
+                                                        recommended_movies=recommended_movies,
+                                                        recommended_movies_posters=recommended_movies_posters,
+
+                                                        )
+
+@app.route('/login')
+def login():
+    if 'user_id' not in session:
+        return render_template("movie_templates/login.html",)
+    else:
+        return redirect('/')
+
+@app.route('/register')
+def about():
+    return render_template("movie_templates/register.html",)
+
+
+@app.route('/login_validation',methods=['POST'])
+def login_validation():
+    email=request.form.get("email")
+    password=request.form.get("password")
+
+    cursor.execute("""SELECT * from `users` WHERE `email` LIKE '{}' AND `password` LIKE '{}'""".format(email,password))
+    users = cursor.fetchall()
+    if len(users) > 0:
+        session['user_id']=users[0][0]
+        return redirect('/')
+    else:
+        return redirect('/login')
+    
+@app.route('/add_user',methods=['POST'])
+def add_user():
+    name=request.form.get("uname")
+    email=request.form.get("uemail")
+    password=request.form.get('upassword')
+    cursor.execute("""INSERT INTO `users` (`user_id`,`name`,`email`,`password`) VALUES
+    (NULL,'{}','{}','{}')""".format(name,email,password))
+
+    conn.commit()
+    cursor.execute("""SELECT * FROM `users` WHERE `email` LIKE '{}'""".format(email))
+    myuser=cursor.fetchall()
+    session['user_id']=myuser[0][0]
+
+    return redirect('/')
+
+@app.route("/logout")
+def logout():
+    session.pop("user_id")
+    return redirect("/login")
+
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True) 
