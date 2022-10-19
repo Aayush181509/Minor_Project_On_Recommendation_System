@@ -1,4 +1,5 @@
-from flask import Flask, render_template,request,redirect,session
+import json
+from flask import Flask, render_template,request,redirect,session, url_for
 import pickle
 import numpy as np
 import pandas as pd
@@ -10,8 +11,6 @@ app=Flask(__name__)
 
 app.secret_key=os.urandom(24)
 
-conn = mysql.connector.connect(host='localhost',database='my_db',user='root',password='A@yush@8131')
-cursor = conn.cursor()
 
 
 movies_dict = pickle.load(open("data_files/movie_dict.pkl","rb"))
@@ -58,23 +57,26 @@ popularity_val = list(popularity_df['popularity'].values)
 @app.route('/')
 def index():
     if 'user_id' in session:
-
+        # user_info=eval(name)
+        print(session["user_name"])
         return render_template("movie_templates/index.html",movie_title = movie_title[:50],
                                                         popularity_val=popularity_val[:50],
                                                         movie_poster=movie_poster,
-                                                        overview=overview)
+                                                        overview=overview,
+                                                        name=session)
     else:
         return redirect('/login')
 
 
-@app.route('/recommend')
+@app.route('/recommend/')
 def recommend_ui():
     if 'user_id' in session:
 
         return render_template("movie_templates/recommend.html",movie_title = movie_title[:50],
                                                         popularity_val=popularity_val[:50],
                                                         movie_poster=movie_poster,
-                                                        overview=overview)
+                                                        overview=overview,
+                                                        name=session)
     else:
         return redirect('/login')
 
@@ -100,6 +102,7 @@ def recommend_movie():
                                                         overview=overview,
                                                         recommended_movies=recommended_movies,
                                                         recommended_movies_posters=recommended_movies_posters,
+                                                        name=session
 
                                                         )
 
@@ -119,11 +122,19 @@ def about():
 def login_validation():
     email=request.form.get("email")
     password=request.form.get("password")
+    conn = mysql.connector.connect(host='localhost',database='my_db',user='root',password='A@yush@8131')
+    cursor = conn.cursor()
 
     cursor.execute("""SELECT * from `users` WHERE `email` LIKE '{}' AND `password` LIKE '{}'""".format(email,password))
     users = cursor.fetchall()
+    cursor.close()
+    print('Database Closed')
     if len(users) > 0:
         session['user_id']=users[0][0]
+        session['user_name']=users[0][1]
+        session['user_email']= users[0][2]
+        
+        # print(session['user_email'])
         return redirect('/')
     else:
         return redirect('/login')
@@ -133,19 +144,29 @@ def add_user():
     name=request.form.get("uname")
     email=request.form.get("uemail")
     password=request.form.get('upassword')
+    conn = mysql.connector.connect(host='localhost',database='my_db',user='root',password='A@yush@8131')
+    cursor = conn.cursor()
+
     cursor.execute("""INSERT INTO `users` (`user_id`,`name`,`email`,`password`) VALUES
     (NULL,'{}','{}','{}')""".format(name,email,password))
 
     conn.commit()
     cursor.execute("""SELECT * FROM `users` WHERE `email` LIKE '{}'""".format(email))
     myuser=cursor.fetchall()
+    cursor.close()
+
     session['user_id']=myuser[0][0]
+    session['user_name']=myuser[0][1]
+    session['user_email']=myuser[0][2]
 
     return redirect('/')
 
 @app.route("/logout")
 def logout():
     session.pop("user_id")
+    session.pop("user_name")
+    session.pop("user_email")
+
     return redirect("/login")
 
 

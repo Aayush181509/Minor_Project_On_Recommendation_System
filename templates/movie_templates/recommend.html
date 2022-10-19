@@ -21,11 +21,11 @@
     <!-- <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" /> -->
-    <title>Movie Recommender</title>
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5..v1582751026.png" />
+      <title>Movie Recommender</title>
+      <link
+        rel="icon"
+        type="image/x-icon"
+        href="../../static/img/logo.png" />
   </head>
   <body class="bg-dark">
     <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
@@ -39,7 +39,7 @@
         </button>
         <a href="/" class="navbar-brand mr-5">
           <img
-            src="https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5..v1582751026.png"
+            src="../../static/img/logo.png"
             height="100"
             alt="" />
         </a>
@@ -62,6 +62,11 @@
             </li>
           </ul>
           <ul class="navbar-nav">
+            <li class="navbar-text">
+              <h1>
+                <span class="badge badge-danger" style="border-radius: 10px; margin-right: 30px;"><strong>{{name['user_name']}}</strong></span>
+              </h1>    
+            </li>
             <li class="navbar-text">
               <a href="/logout" class="nav-link" style="font-size: 22px">
                 <span class="fa fa-sign-in mr-3">Logout</span>
@@ -198,7 +203,7 @@
         </div>
         </div>
         {% endif %}
-<div class="container-fluid">
+<div class="container-fluid mb-5 mt-5">
         <div class="row mt-5" style="text-align: center;">
 
           <div class="col-4">

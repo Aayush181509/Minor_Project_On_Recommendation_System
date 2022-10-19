@@ -22,7 +22,7 @@
     <link
       rel="icon"
       type="image/x-icon"
-      href="https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5..v1582751026.png" />
+      href="../../static/img/logo.png" />
   </head>
   <body>
     <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
@@ -34,9 +34,9 @@
           data-target="#Navbar">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <a href="index.html" class="navbar-brand mr-5">
+        <a href="/" class="navbar-brand mr-5">
           <img
-            src="https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5..v1582751026.png"
+            src="../../static/img/logo.png"
             height="100"
             alt="" />
         </a>
@@ -58,7 +58,13 @@
               </a>
             </li>
           </ul>
+          
           <ul class="navbar-nav">
+            <li class="navbar-text">
+              <h1>
+                <span class="badge badge-danger" style="border-radius: 10px; margin-right: 30px;"><strong>{{name['user_name']}}</strong></span>
+              </h1>    
+            </li>
             <li class="navbar-text">
               <a href="/logout" class="nav-link" style="font-size: 22px">
                 <span class="fa fa-sign-in mr-3">Logout</span>
@@ -72,6 +78,7 @@
       <div class="container-fluid">
         <div class="row row-header">
           <div class="col-12 col-sm-6">
+            
             <h1>Trending Movies</h1>
           </div>
         </div>
