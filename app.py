@@ -12,7 +12,6 @@ app=Flask(__name__)
 app.secret_key=os.urandom(24)
 
 
-
 movies_dict = pickle.load(open("data_files/movie_dict.pkl","rb"))
 movies = pd.DataFrame(movies_dict)
 similarity=pickle.load(open("data_files/similarity.pkl","rb"))
@@ -169,6 +168,9 @@ def logout():
 
     return redirect("/login")
 
+@app.route("/contact")
+def contact():
+    return render_template("movie_templates/contact.html",name=session)
 
 if __name__=="__main__":
     app.run(debug=True) 
