@@ -6,11 +6,21 @@ import pandas as pd
 import requests
 import os
 import mysql.connector
+from flask_mail import *
 
 app=Flask(__name__)
+with open("config.json", "r") as f:
+    params=json.load(f)['params']
 
 app.secret_key=os.urandom(24)
+mail=Mail(app)
 
+app.config["MAIL_SERVER"]="smtp.gmail.com"
+app.config["MAIL_PORT"]=465
+app.config["MAIL_USERNAME"]=params['gmail-user']
+app.config["MAIL_PASSWORD"]=params['gmail-password']
+app.config["MAIL_USE_TLS"]=False
+app.config["MAIL_USE_SSL"]=True
 
 movies_dict = pickle.load(open("data_files/movie_dict.pkl","rb"))
 movies = pd.DataFrame(movies_dict)
@@ -57,7 +67,6 @@ popularity_val = list(popularity_df['popularity'].values)
 def index():
     if 'user_id' in session:
         # user_info=eval(name)
-        print(session["user_name"])
         return render_template("movie_templates/index.html",movie_title = movie_title[:50],
                                                         popularity_val=popularity_val[:50],
                                                         movie_poster=movie_poster,
@@ -170,7 +179,16 @@ def logout():
 
 @app.route("/contact")
 def contact():
-    return render_template("movie_templates/contact.html",name=session)
+    if 'user_id' in session:
+        return render_template("movie_templates/contact.html",name=session)
+    else:
+        return redirect("/")
+
+
+@app.route("/test")
+def test():
+    return render_template("movie_templates/test.html")
+
 
 if __name__=="__main__":
     app.run(debug=True) 
