@@ -26,7 +26,7 @@
                     alt={{movie_title[11]}} />
                   <div class="carousel-caption d-none d-md-block">
                     <h2>
-                      <span class="badge badge-danger">{{movie_title[11]}}</span>
+                      <a href="/movie_description?name={{movie_title[11]}}"><span class="badge badge-danger">{{movie_title[11]}}</span></a>
                     </h2>
                     <p class="d-none d-sm-block">
                       {{overview[11]}}
@@ -44,7 +44,7 @@
                   <div class="carousel-caption d-none d-md-block">
                     <h2>
                       
-                      <span class="badge badge-danger">{{movie_title[1]}}</span>
+                      <a href="/movie_description?name={{movie_title[1]}}"><span class="badge badge-danger">{{movie_title[1]}}</span></a>
                     </h2>
                     <p class="d-none d-sm-block">
                       {{overview[1]}}
@@ -62,7 +62,7 @@
                   <div class="carousel-caption d-none d-md-block">
                     <h2>
                       
-                      <span class="badge badge-danger">{{movie_title[15]}}</span>
+                      <a href="/movie_description?name={{movie_title[15]}}"><span class="badge badge-danger">{{movie_title[15]}}</span></a>
                     </h2>
                     <p class="d-none d-sm-block">
                       {{overview[15]}}
@@ -105,11 +105,12 @@
         {% for i in range(movie_title|length) %}
         <div class="col-md-3 mt-5 text-center">
           <div class="card bg-dark" style="width: 18rem; color:floralwhite;">
-            <img
+            <a href="/movie_description?name={{movie_title[i]}}"><img
               class="card-img-top"
               style="border-radius: 40px;"
               src={{movie_poster[i]}}
               alt="Card image cap" />
+              </a>
             <div class="card-body" style="border-radius: 20px;">
               <h5 class="card-title" style="border-bottom: 1px ridge;"><strong> {{movie_title[i]}}</strong></h5>
               <p class="card-text">

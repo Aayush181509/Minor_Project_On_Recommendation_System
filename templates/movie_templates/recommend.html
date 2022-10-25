@@ -112,11 +112,12 @@
         {% for i in range(5)%}
         <div class="col-md-2 mt-5 text-center">
           <div class="card bg-dark" style="width: 18rem; color:floralwhite;">
-            <img
+            <a href="/movie_description?name={{recommended_movies[i]}}"><img
               class="card-img-top"
               style="border-radius: 40px;"
               src={{recommended_movies_posters[i] }}
               alt="Card image cap" />
+            </a>
             <div class="card-body">
               <h5 class="card-title"><strong> {{recommended_movies[i]}}</strong></h5>
               
